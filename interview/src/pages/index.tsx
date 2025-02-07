@@ -12,7 +12,9 @@ interface Carrier {
   carrierType: string;
 }
 
-
+const getSortedData = (data: Carrier[]) => {
+  return [...data].sort((a, b) => a.name.localeCompare(b.name));
+};
 
 export default function Home() {
   const { data, isLoading, error } = api.post.fetchData.useQuery({
@@ -22,6 +24,9 @@ export default function Home() {
       4292167, 2146209, 2064610, 3424162,
     ],
   });
+
+  // Sorting the data alphabetically by name
+  const sortedData = data ? getSortedData(data) : [];
 
   // Waits for the page to Load
   if (isLoading) return <p>Loading...</p>;
@@ -64,12 +69,12 @@ export default function Home() {
                   </tr>
                 </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
-                {data.map((carrier: Carrier, index: number) => (
+                {sortedData.map((carrier: Carrier, index: number) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap text-xs font-medium text-gray-800 dark:text-neutral-500">{carrier.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-800 dark:text-neutral-500">{carrier.usDotNumber}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-800 dark:text-neutral-500">{carrier.docketNumbers}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-800 dark:text-neutral-500">{carrier.dotStatus}</td>
+                    <td style={{ color: carrier.dotStatus === 'Active' ? 'green' : 'red' }} className="px-6 py-4 whitespace-nowrap text-xs text-gray-800 dark:text-neutral-500">{carrier.dotStatus}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-800 dark:text-neutral-500">{carrier.authorityStatus}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-800 dark:text-neutral-500">{carrier.carrierType}</td>
                   </tr>
